@@ -37,19 +37,26 @@ for filename in tif_files:
     slide_name = filename.replace(".tif", "")
     output_dir = os.path.join(PATCHES_DIR, slide_name)
     
-
-    patch_paths = fast_tiling(
-        wsi_path=wsi_path,
-        output_dir=output_dir,
-        patch_size=256,
-        stride=256,
-        level=0,
-        tissue_method="otsu",
-        tissue_threshold=0.1,
-        save_format="npy",
-        verbose=False
-    )
-    all_patch_paths.extend(patch_paths)
+    try:
+        patch_paths = fast_tiling(
+            wsi_path=wsi_path,
+            output_dir=output_dir,
+            patch_size=256,
+            stride=256,
+            level=0,
+            tissue_method="otsu",
+            tissue_threshold=0.01,
+            save_format="npy",
+            verbose=False
+        )
+        if patch_paths is None:
+            print(f"  ⚠️  No patches extracted for {filename}")
+            continue
+        print(f"  ✅ Extracted {len(patch_paths)} patches for {filename}")
+        all_patch_paths.extend(patch_paths)
+    except Exception as e:
+        print(f"  ❌ Error processing {filename}: {e}")
+        continue
 
 
 slide_to_patches = {}

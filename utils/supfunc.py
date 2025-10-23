@@ -122,10 +122,10 @@ def histogram(img, thres_img, img_c, thres):
     plt.show()
 def is_tissue(patch, tissue_method = "otsu", tissue_threshold = 0.01):
     
-    if patch.ndim == 2:
-        patch = cv2.cvtColor(patch, cv2.COLOR_GRAY2RGB)
-    elif patch.shape[2] == 4:
-        patch = patch[:, :, :3]  # Remove alpha
+    # if patch.ndim == 2:
+    #     patch = cv2.cvtColor(patch, cv2.COLOR_GRAY2RGB)
+    # elif patch.shape[2] == 4:
+    #     patch = patch[:, :, :3]  # Remove alpha
     gray = cv2.cvtColor(patch, cv2.COLOR_RGB2GRAY)
     if tissue_method == "otsu":
         thres, thres_img = cv2.threshold(gray,0,255,cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -162,9 +162,9 @@ def tiling(
         for x in range(0, w-patch_size, stride):
             patch = np.array(slide.read_region((x,y), level, (patch_size, patch_size)))[:,:,:3]
 
-            if not is_tissue(patch, tissue_method= tissue_method, tissue_threshold = tissue_threshold):
-                pbar.update(1)
-                continue
+            # if not is_tissue(patch, tissue_method= tissue_method, tissue_threshold = tissue_threshold):
+            #     pbar.update(1)
+            #     continue
 
             patch_name = f"{os.path.basename(wsi_path).replace('.tif', '')}_x{x}_y{y}.{save_format}"
             patch_path = os.path.join(output_dir, patch_name)
