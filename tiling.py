@@ -6,7 +6,7 @@ patches = tiling(
     stride=224,
     level=0,
     tissue_method="otsu",
-    tissue_threshold=0.2,
+    tissue_threshold=0.3,
     save_format="npy",
     verbose=True
 )

@@ -133,7 +133,7 @@ def is_tissue(patch, tissue_method="otsu", tissue_threshold=0.1):
     else:
         raise ValueError(f"Method {tissue_method} not recognized")
     
-    tissue_ratio = np.mean(thres_img == 255)  # Now this is ACTUAL tissue
+    tissue_ratio = np.mean(gray == 255)  # Now this is ACTUAL tissue
     return tissue_ratio >= tissue_threshold
 def tiling(
         wsi_path,
