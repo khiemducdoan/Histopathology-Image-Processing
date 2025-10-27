@@ -1,2 +1,5 @@
 dataset/*
 camelyon17_mil_small/*
+test_patches/*
+
+*_ignore.*

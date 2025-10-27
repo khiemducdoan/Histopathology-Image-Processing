@@ -120,19 +120,21 @@ def histogram(img, thres_img, img_c, thres):
     
     plt.tight_layout()
     plt.show()
-def is_tissue(patch, tissue_method = "otsu", tissue_threshold = 0.01):
-    
-    # if patch.ndim == 2:
-    #     patch = cv2.cvtColor(patch, cv2.COLOR_GRAY2RGB)
-    # elif patch.shape[2] == 4:
-    #     patch = patch[:, :, :3]  # Remove alpha
+def is_tissue(patch, tissue_method="otsu", tissue_threshold=0.1):
     gray = cv2.cvtColor(patch, cv2.COLOR_RGB2GRAY)
+    
+    # Invert: tissue becomes bright, background dark
+    gray_inv = 255 - gray
+    
     if tissue_method == "otsu":
-        thres, thres_img = cv2.threshold(gray,0,255,cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        _, thres_img = cv2.threshold(gray_inv, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     elif tissue_method == "triangle":
-        thres, thres_img = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_TRIANGLE)
+        _, thres_img = cv2.threshold(gray_inv, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_TRIANGLE)
     else:
-        raise ValueError(f"What is tissue method excuse me ? {tissue_method} not recognized")
+        raise ValueError(f"Method {tissue_method} not recognized")
+    
+    tissue_ratio = np.mean(thres_img == 255)  # Now this is ACTUAL tissue
+    return tissue_ratio >= tissue_threshold
 def tiling(
         wsi_path,
         output_dir,
@@ -162,9 +164,9 @@ def tiling(
         for x in range(0, w-patch_size, stride):
             patch = np.array(slide.read_region((x,y), level, (patch_size, patch_size)))[:,:,:3]
 
-            # if not is_tissue(patch, tissue_method= tissue_method, tissue_threshold = tissue_threshold):
-            #     pbar.update(1)
-            #     continue
+            if not is_tissue(patch, tissue_method= tissue_method, tissue_threshold = tissue_threshold):
+                pbar.update(1)
+                continue
 
             patch_name = f"{os.path.basename(wsi_path).replace('.tif', '')}_x{x}_y{y}.{save_format}"
             patch_path = os.path.join(output_dir, patch_name)

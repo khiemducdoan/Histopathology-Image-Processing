@@ -13,8 +13,6 @@ stages_path = os.path.join(DATA_ROOT, "stages.csv")
 if os.path.exists(stages_path):
     df = pd.read_csv(stages_path)
     print(f"✅ Loaded {len(df)} rows from stages.csv")
-    
-    
     slide_label_map = {}
     for _, row in df.iterrows():
         filename = row["patient"]
@@ -22,7 +20,7 @@ if os.path.exists(stages_path):
         if filename.endswith(".tif"):
             label = 0 if stage == "negative" else 1
             slide_label_map[filename] = label
-    print(f"   Mapped {len(slide_label_map)} slides to labels")
+    print(f"Mapped {len(slide_label_map)} slides to labels")
 else:
     slide_label_map = None
 
@@ -50,12 +48,12 @@ for filename in tif_files:
             verbose=False
         )
         if patch_paths is None:
-            print(f"  ⚠️  No patches extracted for {filename}")
+            print(f"No patches extracted for {filename}")
             continue
-        print(f"  ✅ Extracted {len(patch_paths)} patches for {filename}")
+        print(f"Extracted {len(patch_paths)} patches for {filename}")
         all_patch_paths.extend(patch_paths)
     except Exception as e:
-        print(f"  ❌ Error processing {filename}: {e}")
+        print(f"Error processing {filename}: {e}")
         continue
 
 
@@ -84,4 +82,4 @@ metadata_path = os.path.join(DATA_ROOT, "mil_dataset.json")
 with open(metadata_path, "w") as f:
     json.dump(dataset_info, f, indent=2)
 
-print(f"\n🎉 Done! Metadata saved to {metadata_path}")
+print(f"\nDone! Metadata saved to {metadata_path}")
